@@ -2,6 +2,7 @@ import random
 import string
 from math import sqrt
 
+#hello
 
 def program():
     file1 = open('e_many_teams.in', 'r')
