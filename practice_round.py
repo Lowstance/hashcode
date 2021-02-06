@@ -1,106 +1,85 @@
 import random
 import string
+from collections import Counter
 
 file_name = 'e_many_teams'
-margin = 2
+w1 = 300
+w2 = 1
+max_size = 1
 
 #hello
 #parser IT WORKS
+
 def parser(file_name):
+    global max_size
     file1 = open(file_name+'.in', 'r')
     first_line = file1.readline()
     first_line = first_line[:-1].split(" ")
     info_array = []
     for i in range(0 , int (first_line[0])):
         token_line = file1.readline()
-        info_array.append(token_line[0:-1].split(" "))
+        if int(token_line[0]) > max_size:
+            max_size = int(token_line[0])
+        info_array.append(token_line[2:-1].split(" "))
     file1.close()
-    return first_line, info_array
+    return [int(i) for i in first_line] , info_array
 
 
-def write(final_indexes, length):
-    first = 0
-    counter1 = 0
-
-    for i in range (0, int(length[3])):
-        if(counter1 + 3 >= int(length[0])):
-            break
-        counter1 = counter1 + 4
-        first = first + 1
-        
-    for i in range (0, int(length[2])):
-        if(counter1 + 2 >= int(length[0])):
-            break
-        counter1 = counter1 + 3
-        first = first + 1
-
-    for i in range (0, int(length[1])):
-        if(counter1 + 1 >= int(length[0])):
-            break
-        counter1 = counter1 + 2
-        first = first + 1
-        
+def write(final_indexes):
     file2 = open(file_name+'_results.in', 'w')
-    file2.write(str(first) + "\n")
-
-    counter = 0
-
-    for i in range (0, int(length[3])):
-        if(counter + 3 >= int(length[0])):
-            break
-        line = "4 " + str(final_indexes[counter]) + " " + str(final_indexes[counter+1]) + " " + str(final_indexes[counter+2]) + " " + str(final_indexes[counter+3]) + "\n"
-        file2.write(line)
-        counter = counter + 4
-
-    for i in range (0, int(length[2])):
-        if(counter + 2 >= int(length[0])):
-            break
-        line = "3 " + str(final_indexes[counter]) + " " + str(final_indexes[counter+1]) + " " + str(final_indexes[counter+2])+ "\n"
-        file2.write(line)
-        counter = counter + 3
-
-    for i in range (0, int(length[1])):
-        if(counter + 1 >= int(length[0])):
-            break
-        line = "2 " + str(final_indexes[counter]) + " " + str(final_indexes[counter + 1]) + "\n"
-        file2.write(line)
-        counter = counter + 2
-
+    file2.write(''.join(i for i in final_indexes))
     file2.close()
 
-def compare(array_1, array_2):
-    return True if sum([1 if array_1[1:].count(element) else 0 for element in array_2[1:]]) < margin else False
-
+def evaluate(item, population_list):
+    frequency = 1 / sum([population_list.get(i) for i in item])
+    #print("freq" + str(frequency*w1))
+    size = len(item)/max_size
+    #print("size" + str(size*w2))
+    return frequency*w1 + size*w2
 
 def potatoMain(length, info_array):
-    population_list = []
-    population_count_list= []
-    for i in range (0, int(length[0])):
-        for item in info_array[i][1:]:
-            if population_list.count(item) == 0:
-                population_list.append(item)
-                population_count_list.append(1)
-            else:
-                population_count_list[population_list.index(item)] += 1
+    population_list = Counter(row for item in info_array for row in item) 
 
     score_list = []
-    for i in range(0, int(length[0])):
-        score_list.append([sum([population_count_list[population_list.index(item)] for item in info_array[i][1:]]), i])
+    for i in range(0, length[0]):
+        score_list.append([evaluate(info_array[i], population_list), i])
 
     score_list.sort(key=lambda pair: pair[0], reverse = True)
 
-    result = [0]*int(length[0])
-    counter = 0
-    for i in range(0, int(length[0]), 2):
-        result[i] = score_list[int(i/2)][1]
-        if(i+1 >= int(length[0])):
-            break
-        result[i+1] = score_list[int(length[0])-1-int(i/2)][1]
+    result = [0]*length[0]
+    for i in range(0, length[0]):
+        result[i] = score_list[i][1]
+
     return result
 
+def create_result(final_indexes, length):
+    counter = 0
+    result_array = []
+    for i in range (0, length[3]):
+        if(counter + 3 >= length[0]):
+            break
+        line = "4 " + str(final_indexes[counter]) + " " + str(final_indexes[counter+1]) + " " + str(final_indexes[counter+2]) + " " + str(final_indexes[counter+3]) + "\n"
+        result_array.append(line)
+        counter = counter + 4
+
+    for i in range (0, length[2]):
+        if(counter + 2 >= length[0]):
+            break
+        line = "3 " + str(final_indexes[counter]) + " " + str(final_indexes[counter+1]) + " " + str(final_indexes[counter+2])+ "\n"
+        result_array.append(line)
+        counter = counter + 3
+
+    for i in range (0, length[1]):
+        if(counter + 1 >= length[0]):
+            break
+        line = "2 " + str(final_indexes[counter]) + " " + str(final_indexes[counter + 1]) + "\n"
+        result_array.append(line)
+        counter = counter + 2
+
+    result_array.insert(0, str(len(result_array)) + "\n")
+    return result_array
 
 if __name__ == '__main__':
     [length, info] = parser(file_name)
     final_indexes = potatoMain(length, info)
-    write(final_indexes, length)
-
+    write(create_result(final_indexes, length))
