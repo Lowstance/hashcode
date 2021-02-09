@@ -2,9 +2,10 @@ import random
 import string
 from collections import Counter
 
-file_name = 'd_many_pizzas'
+file_name = 'e_many_teams'
 w1 = 0
-w2 = 1
+w2 = 0.8
+w3 = 0.2
 max_size = 0
 max_freq = 0
 
@@ -36,7 +37,8 @@ def write(final_indexes):
 def evaluate(item, population_list):
     frequency = sum([(max_freq-population_list.get(i))/max_freq for i in item])/len(item)
     size = len(item)/max_size
-    return (frequency*w1 + size*w2)/2
+    rand_num = random.random()
+    return frequency*w1 + size*w2 + rand_num*w3
 
 def potatoMain(length, info_array):
     population_list = Counter(row for item in info_array for row in item) 
@@ -102,10 +104,11 @@ def score():
     score = [0] * int(first_line[:-1])
     for i in range(0, int(first_line[:-1])):
         score[i] = len(list(filter(None, set([item for j in result[i] for item in info_array[int(j)]]))))
-        score[i] = score[i]*score[i]
+        score[i] = score[i]**2
 
     file1.close()
     file2.close()
+    print(sum(score))
     return sum(score)
 
 def automatic():
@@ -135,4 +138,4 @@ if __name__ == '__main__':
     final_indexes = potatoMain(length, info)
     write(create_result(final_indexes, length))
     score()
-    automatic()
+    #automatic()
