@@ -11,8 +11,6 @@ max_freq = 0
 
 
 #hello
-#parser IT WORKS
-
 def parser():
     global max_size
     file1 = open(file_name+'.in', 'r')
