@@ -135,4 +135,4 @@ if __name__ == '__main__':
     final_indexes = potatoMain(length, info)
     write(create_result(final_indexes, length))
     score()
-    #automatic()
+    automatic()
