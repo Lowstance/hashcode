@@ -3,9 +3,9 @@ import string
 from collections import Counter
 
 file_name = 'e_many_teams'
-w1 = 0
-w2 = 0.8
-w3 = 0.2
+w1 = 0.2
+w2 = 1
+w3 = 0.02
 max_size = 0
 max_freq = 0
 
@@ -14,17 +14,15 @@ max_freq = 0
 def parser():
     global max_size
     file1 = open(file_name+'.in', 'r')
-    first_line = file1.readline()
-    first_line = first_line[:-1].split(" ")
-    info_array = []
-    for i in range(0 , int (first_line[0])):
-        token_line = file1.readline()
-        if int(token_line[0]) > max_size:
-            max_size = int(token_line[0])
-        info_array.append(token_line[2:-1].split(" "))
+    data = file1.readlines()
+    #info_array = []
+    first_line = data[0].split(" ")
+    #print([i.split(" ") for i in data[1:]])
+    info_array = [i[:-1].split(" ") for i in data[1:]]
+    max_size = max([int(i[0]) for i in info_array])
 
     file1.close()
-    return [int(i) for i in first_line] , info_array
+    return [int(i) for i in first_line] , [i[1:] for i in info_array]
 
 
 def write(final_indexes):
@@ -98,15 +96,21 @@ def score():
         token_line = file2.readline()
         info_array.append(token_line[2:-1].split(" "))
 
-
+    same_res = 0
     score = [0] * int(first_line[:-1])
     for i in range(0, int(first_line[:-1])):
+        addition = len([item for j in result[i] for item in info_array[int(j)]])
         score[i] = len(list(filter(None, set([item for j in result[i] for item in info_array[int(j)]]))))
+        same_res = same_res + addition - score[i]
         score[i] = score[i]**2
+        
+
 
     file1.close()
     file2.close()
+    print(same_res)
     print(sum(score))
+    print(max_size)
     return sum(score)
 
 def automatic():
@@ -133,6 +137,8 @@ def automatic():
 
 if __name__ == '__main__':
     [length, info] = parser()
+    #print(length)
+    #print(info)
     final_indexes = potatoMain(length, info)
     write(create_result(final_indexes, length))
     score()
