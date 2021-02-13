@@ -1,4 +1,4 @@
-file_name = 'hash_Code_2020/a_example'
+file_name = 'hash_Code_2020/f_libraries_of_the_world'
 
 
 
@@ -45,8 +45,10 @@ def sortBooks(lib_book, book_scores):
 def sortLibraries(lib_array, books): 
     n = len(lib_array)
     id = [i for i in range(len(lib_array))]
-    y = [k[2] for k in lib_array]
-    Z = [x for _,x in sorted(zip(y,zip(books, id)))]
+    #y = [k[2] for k in lib_array]
+    y = [len(i) for i in books]
+    #print(y)
+    Z = [x for _,x in sorted(zip(y,zip(books, id)) , reverse = True)]
     return Z
 
 def optimizeBook(lib_book):
@@ -80,4 +82,4 @@ if __name__ == '__main__':
     sortBooks(lib_book , book_scores)
     final_array = sortLibraries(lib_array , lib_book)
     #lib_book = optimizeBook(lib_book)
-    print(buildArray(final_array , first_line))
+    buildArray(final_array , first_line)
