@@ -1,4 +1,4 @@
-file_name = 'hashcode2020/f_libraries_of_the_world'
+file_name = 'hash_Code_2020/a_example'
 
 
 
@@ -21,21 +21,6 @@ def fill_array(lib_book):
 
     return indexes
 
-def sortBooks(lib_book, book_scores): 
-    for k in range(len(lib_book)):
-        n = len(lib_book[k]) 
-        y = [book_scores[int(l)] for l in lib_book[k]]
-        lib_book[k] = [x for _,x in sorted(zip(y, lib_book[k]), reverse=True)]
-    return lib_book
-
-def sortLibraries(lib_array, lib_book): 
-    n = len(lib_array)
-    id = [i for i in range(len(lib_array))]
-    y = [k[2] for k in lib_array]
-    Z = [x for _,x in sorted(zip(y,zip(lib_book, id)))]
-    return Z
-
-
 def deleteduplicate(books, truth_table):
     book = []
     for i in books:
@@ -45,19 +30,37 @@ def deleteduplicate(books, truth_table):
         book.append(i)
     return book
 
+def middleStep(lib_book , first_line):
+    truth_table = [False for i in range(int(first_line[0]))]
+    for i in range(len(lib_book)):
+        lib_book[i] = deleteduplicate(lib_book[i] , truth_table)
+
+def sortBooks(lib_book, book_scores): 
+    for k in range(len(lib_book)):
+        n = len(lib_book[k]) 
+        y = [book_scores[int(l)] for l in lib_book[k]]
+        lib_book[k] = [x for _,x in sorted(zip(y, lib_book[k]), reverse=True)]
+    return lib_book
+
+def sortLibraries(lib_array, books): 
+    n = len(lib_array)
+    id = [i for i in range(len(lib_array))]
+    y = [k[2] for k in lib_array]
+    Z = [x for _,x in sorted(zip(y,zip(books, id)))]
+    return Z
+
+def optimizeBook(lib_book):
+    return [list(set(i)) for i in lib_book]
 
 def buildArray(info, first_line):
     final_indexes = []
-    truth_table = [False for i in range(int(first_line[0]))]
-    #print(truth_table)
     final_indexes.append(len(info))
     for i in range(len(info)):
         temp = []
-        temp_info = deleteduplicate(info[i][0], truth_table)
-        if not temp_info:
+        if not info[i][0]:
             continue
-        temp.append([info[i][1], len(temp_info)])
-        temp.append(temp_info)
+        temp.append([info[i][1], len(info[i][0])])
+        temp.append(info[i][0])
         final_indexes.append(temp)
     return final_indexes
     
@@ -67,11 +70,14 @@ def write(final_indexes):
     file2.write(''.join(i for i in final_indexes))
     file2.close()
 
-def optimizeBook(lib_book):
-    return [list(set(i)) for i in lib_book]
+
+
 
 
 if __name__ == '__main__':
     first_line, book_scores, lib_array, lib_book = parser()
-    lib_book = optimizeBook(lib_book)
-    buildArray(sortLibraries(lib_array, sortBooks(lib_book, book_scores)), first_line)
+    middleStep(lib_book , first_line)
+    sortBooks(lib_book , book_scores)
+    final_array = sortLibraries(lib_array , lib_book)
+    #lib_book = optimizeBook(lib_book)
+    print(buildArray(final_array , first_line))
